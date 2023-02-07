@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres      
+    volumes:
+      - .:/app
+    tmpfs:
+      - /tmp/pids/
+    environment:
+      RAILS_ENV: development
+      DB_HOST: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: changeme
+      PIDFILE: /tmp/pids/server.pid      
+      DATABASE_URL: postgres://postgres:changeme@postgres:5432/cinemma
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5452:5432"
+    restart: always
+  
+volumes:
+  app:
+  postgres-data:  
+
+networks:
+  cinemma-local:
+    external: true

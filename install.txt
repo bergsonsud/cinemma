@@ -1,0 +1,1 @@
+rails new cinemma --api --database=postgresql
